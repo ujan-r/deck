@@ -4,7 +4,7 @@ EXE := deck
 all: $(EXE)
 
 $(EXE): src/*.c
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ -lcurses
 
 .PHONY: clean
 clean:
