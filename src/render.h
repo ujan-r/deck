@@ -1,0 +1,9 @@
+#ifndef INCLUDE_GUARD_40D185C1_C897_4891_86D3_6CD75829A11F
+#define INCLUDE_GUARD_40D185C1_C897_4891_86D3_6CD75829A11F
+
+#include "display.h"
+#include "slide.h"
+
+void renderSlide(Slide, Display *);
+
+#endif /* !INCLUDE_GUARD_40D185C1_C897_4891_86D3_6CD75829A11F */
