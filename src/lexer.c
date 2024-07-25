@@ -7,6 +7,7 @@
 
 #include "element.h"
 #include "lexer.h"
+#include "utils.h"
 
 static bool readHeading(char const **, Element *);
 static bool readParagraph(char const **, Element *);
@@ -21,8 +22,7 @@ Element const *lex(char const *text, size_t *slideCount) {
 
     Element *elements = calloc(capacity, sizeof *elements);
     if (!elements) {
-        fprintf(stderr, "memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exitWithError("memory allocation failed\n");
     }
 
     while (*text) {
@@ -30,8 +30,7 @@ Element const *lex(char const *text, size_t *slideCount) {
             capacity *= 2;
             Element *p = realloc(elements, capacity * sizeof *elements);
             if (!p) {
-                fprintf(stderr, "memory allocation failed\n");
-                exit(EXIT_FAILURE);
+                exitWithError("memory allocation failed\n");
             }
             elements = p;
         }
@@ -50,8 +49,7 @@ Element const *lex(char const *text, size_t *slideCount) {
         if (readCodeBlock(&text, &elements[n])) { n++; continue; }
         if (readParagraph(&text, &elements[n])) { n++; continue; }
 
-        fprintf(stderr, "unexpected character: %c\n", *text);
-        exit(EXIT_FAILURE);
+        exitWithError("unexpected character: %c\n", *text);
     }
 
     elements[n].type = END;
@@ -103,8 +101,7 @@ static bool readCodeBlock(char const **text, Element *element) {
 
     char *string = calloc(length + 1, sizeof *element->text);
     if (!string) {
-        fprintf(stderr, "memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exitWithError("memory allocation failed\n");
     }
 
     element->type = CODE;
@@ -126,8 +123,7 @@ static bool readParagraph(char const **text, Element *element) {
 
     char *string = calloc(length + 1, sizeof *element->text);
     if (!string) {
-        fprintf(stderr, "memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exitWithError("memory allocation failed\n");
     }
 
     element->type = PARAGRAPH;
@@ -152,8 +148,7 @@ char * readLine(char const **text) {
 
     char *string = calloc(length + 1, sizeof *string);
     if (!string) {
-        fprintf(stderr, "memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exitWithError("memory allocation failed\n");
     }
 
     return memcpy(string, start, length);

@@ -8,6 +8,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "slide.h"
+#include "utils.h"
 
 static Slide parseSlide(Element const *, Element const **next);
 
@@ -16,8 +17,7 @@ void parseDeck(char const *text, Deck *deck) {
 
     deck->slides = calloc(deck->length, sizeof *deck->slides);
     if (!deck->slides) {
-        fprintf(stderr, "memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exitWithError("memory allocation failed\n");
     }
 
     size_t n = 0;
@@ -39,8 +39,7 @@ static Slide parseSlide(Element const *elements, Element const **next) {
 
     Element *array = calloc(count, sizeof *array);
     if (!array) {
-        fprintf(stderr, "memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exitWithError("memory allocation failed\n");
     }
 
     memcpy(array, elements, count * sizeof *array);

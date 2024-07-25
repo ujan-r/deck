@@ -7,6 +7,7 @@
 #include "parser.h"
 #include "present.h"
 #include "render.h"
+#include "utils.h"
 
 Display display;
 Deck deck;
@@ -27,8 +28,7 @@ void present(char const *text) {
     display.cells = calloc(display.width * display.height, sizeof *display.cells);
     if (!display.cells) {
         endwin();
-        fprintf(stderr, "memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        exitWithError("memory allocation failed\n");
     }
 
     gotoSlide(0);
