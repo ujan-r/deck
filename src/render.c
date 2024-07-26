@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <curses.h>
 #include <string.h>
 
 #include "display.h"
@@ -31,7 +32,11 @@ void renderSlide(Slide slide, Display *display) {
                 break;
             }
 
-            display->cells[row * display->width + col++] = *c;
+            chtype cell = *c;
+            if (element.type == HEADING) {
+                cell |= A_BOLD;
+            }
+            display->cells[row * display->width + col++] = cell;
         }
 
         row++;

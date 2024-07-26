@@ -58,8 +58,8 @@ static void refreshScreen(void) {
 
     for (size_t row = 0; row < display.height; row++) {
         for (size_t col = 0; col < display.width; col++) {
-            char c = display.cells[row * display.width + col];
-            mvaddch(row, col, c ? c : ' ');
+            chtype c = display.cells[row * display.width + col];
+            mvaddch(row, col, c & A_CHARTEXT ? c : ' ');
         }
     }
     refresh();
