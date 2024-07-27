@@ -13,7 +13,7 @@ static bool readHeading(char const **, Element *);
 static bool readParagraph(char const **, Element *);
 static bool readCodeBlock(char const **, Element *);
 
-char * readLine(char const **);
+char * readLine(char const **, size_t *width);
 static void skipBlankLines(char const **);
 
 Element const *lex(char const *text, size_t *slideCount) {
@@ -39,7 +39,7 @@ Element const *lex(char const *text, size_t *slideCount) {
         if (!*text) { break; }
 
         if (strncmp(text, "---\n", 4) == 0) {
-            readLine(&text);
+            readLine(&text, NULL);
             elements[n++].type = SEP;
             ++*slideCount;
             continue;
@@ -77,27 +77,30 @@ static bool readHeading(char const **text, Element *element) {
     }
 
     element->type = HEADING;
-    element->text = readLine(text);
+    element->text = readLine(text, &element->width);
     return true;
 }
 
 static bool readCodeBlock(char const **text, Element *element) {
     assert(text && *text && **text);
 
+    size_t width = 0, temp;
+
     if (strncmp(*text, "```", 3) != 0) {
         return false;
     }
 
-    readLine(text);
+    readLine(text, NULL);
 
     char const *start = *text;
     while (**text && strncmp(*text, "```\n", 4) != 0) {
-        readLine(text);
+        readLine(text, &temp);
+        width = temp > width ? temp : width;
     }
 
     size_t length = *text - start;
 
-    readLine(text);
+    readLine(text, NULL);
 
     char *string = calloc(length + 1, sizeof *element->text);
     if (!string) {
@@ -106,20 +109,24 @@ static bool readCodeBlock(char const **text, Element *element) {
 
     element->type = CODE;
     element->text = memcpy(string, start, length);
+    element->width = width;
     return true;
 }
 
 static bool readParagraph(char const **text, Element *element) {
     assert(text && *text && **text);
 
+    size_t width = 0, temp;
+
     char const *start = *text;
     while (**text && **text != '\n') {
-        readLine(text);
+        readLine(text, &temp);
+        width = temp > width ? temp : width;
     }
 
     size_t length = *text - start;
 
-    readLine(text);
+    readLine(text, NULL);
 
     char *string = calloc(length + 1, sizeof *element->text);
     if (!string) {
@@ -128,30 +135,36 @@ static bool readParagraph(char const **text, Element *element) {
 
     element->type = PARAGRAPH;
     element->text = memcpy(string, start, length);
+    element->width = width;
     return true;
 }
 
-char * readLine(char const **text) {
+char * readLine(char const **text, size_t *width) {
     assert(text && *text);
 
+    if (!width) {
+        size_t temp;
+        return readLine(text, &temp);
+    }
+
     char const *start = *text;
-    size_t length = 0;
+    *width = 0;
 
     while (**text && **text != '\n') {
         ++*text;
-        length++;
+        ++*width;
     }
 
     if (**text == '\n') {
         ++*text;
     }
 
-    char *string = calloc(length + 1, sizeof *string);
+    char *string = calloc(*width + 1, sizeof *string);
     if (!string) {
         exitWithError("memory allocation failed\n");
     }
 
-    return memcpy(string, start, length);
+    return memcpy(string, start, *width);
 }
 
 static void skipBlankLines(char const **text) {
