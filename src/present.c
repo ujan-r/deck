@@ -24,6 +24,17 @@ void present(char const *text) {
     noecho();
     keypad(stdscr, TRUE);
 
+    start_color();
+
+#ifdef NCURSES_VERSION
+    use_default_colors();
+    #define COLOR_DEFAULT -1
+#else
+    #define COLOR_DEFAULT 0
+#endif
+
+    init_pair(1, COLOR_GREEN, COLOR_DEFAULT);
+
     getmaxyx(stdscr, display.height, display.width);
     display.cells = calloc(display.width * display.height, sizeof *display.cells);
     if (!display.cells) {

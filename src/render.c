@@ -33,8 +33,15 @@ void renderSlide(Slide slide, Display *display) {
             }
 
             chtype cell = *c;
-            if (element.type == HEADING) {
-                cell |= A_BOLD;
+	    switch (element.type) {
+	        case HEADING:
+                    cell |= A_BOLD;
+                    break;
+                case CODE:
+                    cell |= COLOR_PAIR(1);
+                    break;
+                default:
+                    break;
             }
             display->cells[row * display->width + col++] = cell;
         }
