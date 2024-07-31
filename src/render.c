@@ -16,13 +16,13 @@ void renderSlide(Slide slide, Display *display) {
         Element element = slide.elements[i];
 
         size_t startCol;
-	if (element.type == HEADING && element.width < display->width) {
+        if (element.type == HEADING && element.width < display->width) {
             startCol = (display->width - element.width) / 2;
         } else {
             startCol = 0;
         }
 
-	col = startCol;
+        col = startCol;
 
         for (char const *c = element.text; *c != '\0'; c++) {
             if (*c == '\n') {
@@ -41,8 +41,8 @@ void renderSlide(Slide slide, Display *display) {
             }
 
             chtype cell = *c;
-	    switch (element.type) {
-	        case HEADING:
+            switch (element.type) {
+                case HEADING:
                     cell |= A_BOLD;
                     break;
                 case CODE:
